@@ -1,0 +1,73 @@
+warehouse operation analytics 
+Query 1: Create the table
+CREATE TABLE warehouse_orders (
+    order_id INT PRIMARY KEY,
+    warehouse VARCHAR(50),
+    order_status VARCHAR(20),
+    processing_min INT,
+    sla_min INT,
+    items_ordered INT,
+    items_picked INT
+);
+
+
+Query 2: Insert sample data
+INSERT INTO warehouse_orders VALUES
+(101, 'Delhi', 'Completed', 25, 30, 3, 3),
+(102, 'Delhi', 'Delayed', 45, 30, 4, 3),
+(103, 'Mumbai', 'Completed', 20, 30, 2, 2),
+(104, 'Mumbai', 'Completed', 28, 30, 5, 5),
+(105, 'Delhi', 'Cancelled', 40, 30, 3, 2),
+(106, 'Mumbai', 'Delayed', 50, 35, 4, 4),
+(107, 'Chennai', 'Completed', 22, 30, 3, 3),
+(108, 'Chennai', 'Completed', 27, 30, 2, 2),
+(109, 'Delhi', 'Completed', 29, 30, 4, 4),
+(110, 'Chennai', 'Delayed', 42, 35, 5, 4);
+
+
+Query 3: Total orders by warehouse
+SELECT
+    warehouse,
+    COUNT(*) AS total_orders
+FROM warehouse_orders
+GROUP BY warehouse
+ORDER BY total_orders DESC;
+
+Query 4: Calculate fulfillment rate
+SELECT
+    warehouse,
+    COUNT(*) AS total_orders,
+    SUM(CASE
+        WHEN order_status = 'Completed' THEN 1
+        ELSE 0
+    END) AS completed_orders,
+    ROUND(
+        100.0 * SUM(CASE
+            WHEN order_status = 'Completed' THEN 1
+            ELSE 0
+        END) / COUNT(*), 2
+    ) AS fulfillment_rate_pct
+FROM warehouse_orders
+GROUP BY warehouse;
+
+Query 5: Average processing time
+SELECT
+    warehouse,
+    ROUND(AVG(processing_min), 2)
+        AS avg_processing_min
+FROM warehouse_orders
+WHERE order_status <> 'Cancelled'
+GROUP BY warehouse;
+
+Query 6: Identify delayed orders
+SELECT
+    order_id,
+    warehouse,
+    processing_min,
+    sla_min,
+    processing_min - sla_min AS delay_min
+FROM warehouse_orders
+WHERE order_status <> 'Cancelled'
+  AND processing_min > sla_min
+ORDER BY delay_min DESC;
+
