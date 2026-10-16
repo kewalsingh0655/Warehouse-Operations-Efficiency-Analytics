@@ -1,1 +1,2 @@
 # Warehouse-Operations-Efficiency-Analytics
+This project analyzes warehouse operations data to identify bottlenecks and evaluate operational performance. Using SQL and Excel, it focuses on inventory accuracy, order processing time, picking and packing efficiency, fulfillment rate, SLA compliance, and cancellation rate. The analysis helps identify operational delays, compare warehouse performance, and recommend data-driven improvements to increase productivity and improve order processing efficiency.
